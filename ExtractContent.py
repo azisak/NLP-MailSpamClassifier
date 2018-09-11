@@ -13,14 +13,14 @@ def CleanPayload (str):
 	re1 = '<.*?>' # html tag
 	re2 = '>+\s' # '> ' or '>> ' and similar
 	re3 = '\s+|\t|\n' # any whitespace
+	re4 = '&.+;' # html special char
+	re5 = '\=\?.+\?\='
+
 	cleanr = re.compile("(%s)" % (re3))
 	cleantext = re.sub(cleanr, ' ', str)
 
-	cleanr2 = re.compile("(%s|%s)" % (re1, re2))
+	cleanr2 = re.compile("(%s|%s|%s|%s)" % (re1, re2, re4, re5))
 	cleantext = re.sub(cleanr2, '', cleantext)
-
-	cleanr3 = re.compile("\[SPAM\]|\[spam\]")
-	cleantext = re.sub(cleanr3, '', cleantext)
 	
 	return cleantext
 
@@ -41,8 +41,9 @@ def ExtractSubPayload (filename):
 	if type(payload) != type('') :
 		payload = str(payload)
 	cleanedPayload = CleanPayload(payload)
+	cleanedSub = CleanPayload(sub)
 	
-	return sub + cleanedPayload
+	return cleanedSub + cleanedPayload
 
 def ExtractBodyFromDir ( srcdir, dstdir ):
 	'''Extract the body information from all .eml files in the srcdir and 
